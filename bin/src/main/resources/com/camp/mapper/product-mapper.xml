@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.camp.mapper.ProductMapper">
+
+	<!-- 물품 리스트 페이징 / 카테고리 검색 -->
+	<select id="getProductList"
+		parameterType="com.camp.vo.Criteria" resultType="com.camp.vo.Product">
+			SELECT *
+			FROM PRODUCT
+			ORDER BY PRODUCTNO DESC
+			LIMIT #{pageStart}, #{perPageNum}	
+	</select>
+	
+	<select id="getProductListCnt" resultType="int">
+		SELECT count(*)
+		FROM PRODUCT
+	</select>
+	
+	<select id="getProductKind"
+		parameterType="com.camp.vo.Criteria" resultType="com.camp.vo.Product">
+			SELECT *
+			FROM PRODUCT
+			WHERE category = #{category}
+			ORDER BY PRODUCTNO DESC
+			LIMIT #{pageStart}, #{perPageNum}
+	</select>	
+	
+	<select id="getProductKindCnt" resultType="int">
+		SELECT count(*)
+		FROM PRODUCT
+		WHERE category = #{ category }
+	</select>
+
+	<select id="selectProductFile" parameterType="int" resultType="com.camp.vo.ProductFile">
+		SELECT PRODUCTFILENO, PRODUCTNO, SAVEDFILENAME, FLAG
+		FROM PRODUCTFILE
+		where PRODUCTNO = #{ productNo }
+		and flag = 1
+	</select>
+	
+	<!-- 물품 디테일 -->
+	<select id="selectProductByProductNo"
+			parameterType="int" resultType="com.camp.vo.Product">
+			SELECT PRODUCTNO, PRODUCTNAME, CONTENT, PRICE, CATEGORY, MEMBERID
+			FROM PRODUCT
+			WHERE PRODUCTNO = #{ productNo }
+	</select>
+	
+	<select id="selectProductFilesByProductNo"
+			parameterType="int" resultType="com.camp.vo.ProductFile">
+			SELECT PRODUCTFILENO, SAVEDFILENAME, USERFILENAME, PRODUCTNO
+			FROM PRODUCTFILE
+			WHERE PRODUCTNO = #{ productNo }
+	</select>
+	
+	<!-- 물품 작성 -->
+	<insert id="insertProduct" parameterType="com.camp.vo.Product"
+			useGeneratedKeys="true" keyColumn="productNo" keyProperty="productNo">
+		INSERT INTO PRODUCT (PRODUCTNAME, CONTENT, PRICE, CATEGORY, MEMBERID)
+		VALUES (#{productName}, #{content}, #{price}, #{category}, #{memberId})
+	</insert>
+	
+	<insert id="insertProductFile" parameterType="com.camp.vo.ProductFile">
+		INSERT INTO PRODUCTFILE (PRODUCTNO, SAVEDFILENAME, USERFILENAME, FLAG)
+		VALUES (#{productNo}, #{savedFileName}, #{userFileName}, #{flag})
+	</insert>
+	
+	<delete id="deleteProduct" parameterType="int">
+		DELETE FROM PRODUCT
+		WHERE PRODUCTNO = #{ productNo }
+	</delete>
+	
+	<delete id="deleteProductFile" parameterType="int">
+		DELETE FROM PRODUCTFILE
+		WHERE PRODUCTFILENO = #{ productFileNo }
+	</delete>
+	
+	<update id="updateProduct" parameterType="com.camp.vo.Product">
+		UPDATE PRODUCT
+		SET PRODUCTNAME = #{ productName }
+			, CONTENT = #{ content }
+			, PRICE = #{ price }
+			, CATEGORY = #{ category }
+		WHERE PRODUCTNO = #{ productNo }
+	</update>
+	
+	<update id="updateProductFile" parameterType="com.camp.vo.ProductFile">
+		UPDATE PRODUCTFILE
+		SET SAVEDFILENAME = #{ savedFileName }, USERFILENAME = #{ userFileName }
+		WHERE PRODUCTNO = #{ productNo } AND FLAG = 1
+	</update>
+	
+
+	
+	
+	
+	
+</mapper>
+

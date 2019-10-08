@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.camp.mapper.ReviewMapper">	
+	
+	
+	
+	
+	
+	<insert id="insertReview" parameterType="com.camp.vo.Review"
+			useGeneratedKeys="true" keyColumn="reviewNo" keyProperty="reviewNo">
+		INSERT INTO REVIEW (TITLE, CONTENT, CATEGORY, MEMBERID, TYPENO)
+		VALUES (#{title}, #{content}, #{category}, #{memberId}, #{typeNo})
+	</insert>
+				
+	<insert id="insertReviewFile" parameterType="com.camp.vo.ReviewFile">
+		INSERT INTO REVIEWFILE (REVIEWNO, SAVEDFILENAME, USERFILENAME, FLAG)
+		VALUES (#{reviewNo}, #{savedFileName}, #{userFileName}, #{flag})
+	</insert>
+	
+	<select id="selectReviewByReviewNo" 
+			parameterType="int" resultType="com.camp.vo.Review">
+		select 
+			REVIEWNO,
+			TITLE,
+			CONTENT,
+			CATEGORY,
+			MEMBERID
+		from REVIEW
+		where REVIEWNO = #{ reviewNo }
+	</select>
+	
+	<select id="selectReviewFile" parameterType="int" resultType="com.camp.vo.ReviewFile">
+		SELECT REVIEWFILENO, SAVEDFILENAME, USERFILENAME, REIVEWNO, FLAG
+		FROM REVIEWFILE
+		WHERE REVIEWNO = #{ reviewNo }
+		AND FLAG = 1
+	</select>
+	
+	<update id="updateReview" parameterType="com.camp.vo.Review">
+		UPDATE REVIEW
+		SET TITLE = #{ title }
+			, CONTENT = #{ content }
+			, CATEGORY = #{ category }
+		WHERE REVIEWNO = #{ reviewNo }
+	</update>
+	
+	<update id="updateReviewFile" parameterType="com.camp.vo.ReviewFile">
+		UPDATE REVIEWFILE
+		SET SAVEDFILENAME = #{ savedFileName }, USERFILENAME = #{ userFileName }
+		WHERE REVIEWNO = #{ reviewNo } AND FLAG = 1
+	</update>
+	
+	<delete id="deleteReview" parameterType="int">
+		DELETE FROM REVIEW
+		WHERE REVIEWNO = #{ reviewNo }
+	</delete>
+	
+	<delete id="deleteReviewFile" parameterType="int">
+		DELETE FROM REVIEWFILE
+		WHERE REVIEWFILENO = #{ reviewFileNo }
+	</delete>
+	
+	<select id="selectReviewFileByReviewFileNo" parameterType="int" resultType="com.camp.vo.ReviewFile">
+		SELECT REVIEWFILENO, SAVEDFILENAME, USERFILENAME, REVIEWNO
+		FROM REVIEWFILE
+		WHERE REVIEWFILENO = #{ reviewFileNo }
+	</select>
+	
+</mapper>
+

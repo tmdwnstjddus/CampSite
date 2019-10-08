@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.camp.mapper.RentMapper">
+
+	<select id="selectRentsByCampNo" parameterType="com.camp.vo.Rental" resultType="com.camp.vo.Rental">
+		SELECT STARTDATE, ENDDATE, CAMPNO, MEMBERID
+		FROM RENTAL
+		WHERE CAMPNO = #{ campNo }		
+	</select>
+	
+	<insert id="insertRent" parameterType="com.camp.vo.Rental">
+		INSERT INTO RENTAL(
+			RENTNO, STARTDATE, ENDDATE, CAMPNO, MEMBERID
+		)
+		VALUES
+		(
+			#{ rentNo }
+			, #{ startDate }
+			, #{ endDate }
+			, #{ campNo }
+			, #{ memberId }
+		)
+	</insert>
+	
+	<delete id="cancleRent" parameterType="com.camp.vo.Rental">
+		DELETE FROM RENTAL
+		WHERE CAMPNO = #{ campNo }
+		AND MEMBERID = #{ memberId }
+		AND RENTNO = #{ rentNo }
+	</delete>
+	
+</mapper>

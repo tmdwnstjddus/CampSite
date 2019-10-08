@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.camp.mapper.QnAMapper">
+	
+		<sql id="qaColumns">SELECT qaNo, title, content, regDate, memberId</sql>
+	
+	<insert id="uploadQnA" parameterType="com.camp.vo.QnA" 
+			useGeneratedKeys="true" keyProperty="qaNo">
+		INSERT INTO QA ( MEMBERID, TITLE, CONTENT )
+		VALUES (#{ memberId }, #{ title }, #{ content })
+	
+	</insert>
+	
+	<!-- 목록조회  -->
+	<select id="selectQnA" resultType="com.camp.vo.QnA">
+	
+		SELECT QANO, TITLE, CONTENT, REGDATE, MEMBERID, COMPLETED
+		FROM QA
+		WHERE DELETED = '0'
+		ORDER BY QANO DESC
+		
+	</select>
+	
+	<!-- 삭제  -->
+	<update id="deleteQnA" parameterType="int">
+		UPDATE QA
+		SET DELETED ='1' 
+		WHERE QANO = #{ qaNo }
+	</update>
+	
+	<!-- detail -->
+	<select id="selectQnABoardByIdx" parameterType="int" resultType="com.camp.vo.QnA">
+		SELECT
+			Q.QANO,
+			Q.TITLE,
+			Q.CONTENT,
+			Q.REGDATE,
+			Q.MEMBERID,
+			Q.COMPLETED,
+			A.COMMENTNO,
+			A.CONTENT,
+			A.REGDATE,
+			A.MEMBERID
+		FROM 
+			QA Q
+		LEFT OUTER JOIN 
+			QACOMMENT A
+		ON 
+			Q.QANO = A.QANO
+		WHERE
+			Q.QANO = #{ qaNo }
+			AND
+			Q.DELETED = '0'
+		ORDER BY
+			Q.QANO DESC 
+	
+	</select>
+
+	<!-- ###########################  -->
+	<insert id="insertQnAComment" parameterType="com.camp.vo.QnAComment" 
+			useGeneratedKeys="true" keyProperty="commentNo">
+		INSERT INTO QACOMMENT (QANO, MEMBERID, CONTENT)
+		VALUES (#{ qaNo }, #{ memberId}, #{ content } )	
+	</insert>
+	
+	<update id="setCompleted" parameterType="int">
+		UPDATE QA
+		SET COMPLETED ='1' 
+		WHERE QANO = #{ qaNo }
+	</update>
+	
+	<select id="selectComment" parameterType="int" resultType="com.camp.vo.QnAComment" >
+		SELECT QANO, COMMENTNO, CONTENT, REGDATE, MEMBERID
+		FROM QACOMMENT
+		WHERE QANO = #{ qaNo }
+	</select>
+	
+	<delete id="dropQnAComment" parameterType="int">
+		DELETED FROM QACOMMENT WHERE QANO = #{ qaNo }		
+	</delete>
+	<update id="setDecompleted" parameterType="int">
+		UPDATE QA
+		SET COMPLETED ='0' 
+		WHERE QANO = #{ qaNo }
+	</update>
+	
+
+
+
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

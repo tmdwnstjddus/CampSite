@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.camp.mapper.CampMapper">	
+	
+	<select id="selectCampByCampNo" 
+			parameterType="int" resultType="com.camp.vo.Camp">
+		select 
+			CAMPNO,
+			CAMPNAME,
+			CONTENT,
+			PRICE,
+			CATEGORY,
+			MEMBERID
+		from CAMP
+		where CAMPNO = #{ campNo }
+	</select>
+	
+	<select id="selectCampFile" parameterType="int" resultType="com.camp.vo.CampFile">
+		SELECT CAMPFILENO, SAVEDFILENAME, USERFILENAME, CAMPNO, FLAG
+		FROM CAMPFILE
+		WHERE CAMPNO = #{ campNo }
+		AND FLAG = 1
+	</select>
+	
+	<select id="selectCampFilesByCampNo" parameterType="int" resultType="com.camp.vo.CampFile">
+		SELECT CAMPFILENO, SAVEDFILENAME, USERFILENAME, CAMPNO, FLAG
+		FROM CAMPFILE
+		WHERE CAMPNO = #{ campNo } AND FLAG = 0
+	</select>
+	
+	<select id="selectCampFileByCampFileNo" parameterType="int" resultType="com.camp.vo.CampFile">
+		SELECT CAMPFILENO, SAVEDFILENAME, USERFILENAME, CAMPNO
+		FROM CAMPFILE
+		WHERE CAMPFILENO = #{ campFileNo }
+	</select>
+	
+	<select id="getCampList"
+		parameterType="com.camp.vo.Criteria" resultType="com.camp.vo.Camp">
+			SELECT *
+			FROM CAMP
+			ORDER BY CAMPNO DESC
+			LIMIT #{pageStart}, #{perPageNum}	
+	</select>
+	
+	<select id="getCampKind"
+		parameterType="com.camp.vo.Criteria" resultType="com.camp.vo.Camp">
+			SELECT *
+			FROM CAMP
+			WHERE category = #{category}
+			ORDER BY CAMPNO DESC
+			LIMIT #{pageStart}, #{perPageNum}
+	</select>
+	
+	<select id="getCampListCnt" resultType="int">
+		SELECT count(*)
+		FROM CAMP
+	</select>
+	
+	<select id="getCampKindCnt" resultType="int">
+		SELECT count(*)
+		FROM CAMP
+		WHERE category = #{ category }
+	</select>
+	
+	<insert id="insertCamp" parameterType="com.camp.vo.Camp"
+			useGeneratedKeys="true" keyColumn="campNo" keyProperty="campNo">
+		INSERT INTO CAMP (CAMPNAME, CONTENT, PRICE, CATEGORY, MEMBERID)
+		VALUES (#{campName}, #{content}, #{price}, #{category}, #{memberId})
+	</insert>
+	
+	<insert id="insertCampFile" parameterType="com.camp.vo.CampFile">
+		INSERT INTO CAMPFILE (CAMPNO, SAVEDFILENAME, USERFILENAME, FLAG)
+		VALUES (#{campNo}, #{savedFileName}, #{userFileName}, #{flag})
+	</insert>
+
+	
+	
+	<update id="updateCamp" parameterType="com.camp.vo.Camp">
+		UPDATE CAMP
+		SET CAMPNAME = #{ campName }
+			, CONTENT = #{ content }
+			, PRICE = #{ price }
+			, CATEGORY = #{ category }
+		WHERE CAMPNO = #{ campNo }
+	</update>
+	
+	<update id="updateCampFile" parameterType="com.camp.vo.CampFile">
+		UPDATE CAMPFILE
+		SET SAVEDFILENAME = #{ savedFileName }, USERFILENAME = #{ userFileName }
+		WHERE CAMPNO = #{ campNo } AND FLAG = 1
+	</update>
+	
+	<delete id="deleteCamp" parameterType="int">
+		DELETE FROM CAMP
+		WHERE CAMPNO = #{ campNo }
+	</delete>
+	
+	<delete id="deleteCampFile" parameterType="int">
+		DELETE FROM CAMPFILE
+		WHERE CAMPFILENO = #{ campFileNo }
+	</delete>
+	
+</mapper>
+

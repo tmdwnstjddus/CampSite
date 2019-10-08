@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.camp.mapper.CartMapper">	
+	
+	<!-- 장바구니/구매 하기 -->
+	<insert id="insertCart" parameterType="com.camp.vo.Cart">
+		INSERT INTO CART (MEMBERID, PRODUCTNO, AMOUNT)
+		VALUES (#{memberId}, #{productNo}, #{amount})
+	</insert>
+	
+	<!--  리스트보기-->
+	<select id="selectCartsByMemberId" resultType="com.camp.vo.Cart">
+		SELECT 
+			c.cartNo AS cartNo,
+			c.memberId AS memberId,
+			p.productNo AS productNo,
+			m.name AS name,
+			p.productName AS productName,
+			c.amount AS amount,
+			p.price AS productPrice,
+			ROUND(price * amount) money
+		FROM MEMBER m, PRODUCT p, CART c
+		WHERE m.memberId = c.memberId
+			AND p.productNo = c.productNo
+			AND c.memberId = #{memberId}
+		ORDER BY c.cartNo
+	</select>
+	
+	<!--장바구니 전체금액  -->
+	<select id="sumMoney" resultType="int">
+		SELECT IFNULL(SUM(price * amount), 0) money
+		FROM CART c, PRODUCT p
+		WHERE c.productNo = p.productNo AND c.memberId = #{memberId}
+	</select>
+	
+	<!-- 장바구니 상품레코드확인 -->
+	<select id="selectMap" resultType="int">
+		SELECT COUNT(*)
+		FROM CART
+		WHERE memberId = #{memberId}
+		AND productNo = #{productNo}
+	</select>
+	
+	<!-- 장바구니 동일상품 존재시 수정 -->
+	<update id="updateCart">
+		UPDATE CART
+		SET amount = amount + #{amount}
+		WHERE memberId = #{memberId}
+		AND productNo = #{productNo}
+	</update>
+	
+	<!--장바구니 수정  -->
+	<update id="modifyCart">
+		UPDATE CART
+		SET CART = #{amount}
+		WHERE CARTNO = #{cartNo}
+		
+	</update>
+	
+</mapper>
+
